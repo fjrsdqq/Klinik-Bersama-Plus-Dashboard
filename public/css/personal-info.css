@@ -1,0 +1,108 @@
+body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f7f9fc;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* agar konten tidak menindih sidebar */
+.dashboard {
+  display: flex;
+  width: 100%;
+}
+
+.profile-content {
+  flex: 1;
+  padding: 2rem 3rem;
+  box-sizing: border-box;
+}
+
+/* Judul Halaman */
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.profile-wrapper {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+/* Kartu kiri */
+.profile-card {
+  width: 260px;
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.profile-card .avatar {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 1rem;
+}
+
+.profile-card .username {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* Tab Navigasi */
+.tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tabs .tab {
+  text-decoration: none;
+  padding: 10px 12px;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  color: #333;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  text-align: center;
+}
+
+.tabs .tab.active,
+.tabs .tab:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+/* Info Personal Kanan */
+.info-card {
+  flex: 1;
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  max-width: 200px;
+}
+
+.info-item {
+  margin-bottom: 1.5rem;
+}
+
+.info-item label {
+  font-size: 14px;
+  font-weight: 600;
+  display: block;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+.info-item p {
+  font-size: 16px;
+  color: #222;
+  margin: 0;
+}

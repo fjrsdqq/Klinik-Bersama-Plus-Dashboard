@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Profile - Klinik Bersama Plus</title>
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/profile.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="dashboard">
+    <%- include('partials/sidebar', { activePage: 'profile' }) %>
+
+    <main class="profile-content">
+      <h2 class="title">Edit Profile</h2>
+      <div class="profile-wrapper">
+
+        <!-- Sidebar Kecil Kiri -->
+        <div class="profile-card">
+          <img src="/images/avatar.svg" alt="User Avatar" class="avatar">
+          <p class="username"><%= user.name %></p>
+          <div class="tabs">
+            <a href="/profile/personal" class="tab <%= activeTab === 'personal' ? 'active' : '' %>">Personal Information</a>
+            <a href="/profile" class="tab <%= activeTab === 'edit' ? 'active' : '' %>">Edit Profile</a>
+            <a href="/profile/change-password" class="tab <%= activeTab === 'password' ? 'active' : '' %>">Change Password</a>
+          </div>
+        </div>
+
+        <!-- Form Edit Profile -->
+        <div class="info-card">
+          <h3>Edit Your Info</h3>
+          <form action="/profile/update" method="POST">
+
+            <div class="form-group">
+              <label for="name">Full Name</label>
+              <input type="text" id="name" name="name" value="<%= user.name %>" class="short-input" required>
+            </div>
+
+            <div class="form-group">
+              <label>Gender</label>
+              <div class="gender">
+                <label><input type="radio" name="gender" value="Male" <%= user.gender === 'Male' ? 'checked' : '' %>> Male</label>
+                <label><input type="radio" name="gender" value="Female" <%= user.gender === 'Female' ? 'checked' : '' %>> Female</label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="birthdate">Birthday Date</label>
+              <input type="date" id="birthdate" name="birthdate" value="<%= user.birthdate ? user.birthdate.toISOString().split('T')[0] : '' %>">
+            </div>
+
+            <button type="submit" class="save-btn">Save</button>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

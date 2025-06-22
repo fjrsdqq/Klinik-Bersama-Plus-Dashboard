@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register - Klinik Bersama Plus</title>
+    <link rel="stylesheet" href="/css/register.css">
+</head>
+<body>
+<div class="login-container">
+    <div class="login-left">
+        <div class="logo">
+            <img src="/images/logo.png" alt="Logo" />
+            <span>Klinik Bersama Plus</span>
+        </div>
+        <img src="/images/health.png" alt="Illustration">
+        <h1>Buat akunmu sekarang</h1>
+        <p>Daftar untuk mulai kontrol kesehatanmu secara rutin.</p>
+    </div>
+    <div class="login-right">
+        <h2>Sign Up</h2>
+        <form action="/register" method="POST">
+            <input type="text" name="name" placeholder="Nama Lengkap" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Register</button>
+            <div class="signup-link">
+                <span>Sudah punya akun?</span> <a href="/login">Login</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

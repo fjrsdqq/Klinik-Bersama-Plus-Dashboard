@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Personal Information - Klinik Bersama Plus</title>
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/personal-info.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="dashboard">
+  <%- include('partials/sidebar', { activePage: 'profile' }) %>
+
+  <main class="profile-content">
+    <h2 class="title">Personal Information</h2>
+
+    <div class="profile-wrapper">
+      <div class="profile-card">
+        <img src="/images/avatar.svg" alt="User Avatar" class="avatar">
+        <p class="username"><%= user.name %></p>
+
+        <div class="tabs">
+          <a href="/profile/personal" class="tab <%= activeTab === 'personal' ? 'active' : '' %>">Personal Information</a>
+          <a href="/profile" class="tab <%= activeTab === 'edit' ? 'active' : '' %>">Edit Profile</a>
+          <a href="/profile/change-password" class="tab <%= activeTab === 'password' ? 'active' : '' %>">Change Password</a>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-item">
+  <label>Full Name</label>
+  <p><%= user.name %></p>
+</div>
+<div class="info-item">
+  <label>Gender</label>
+  <p><%= user.gender || '-' %></p>
+</div>
+<div class="info-item">
+  <label>Birthdate</label>
+  <p><%= user.birthdate ? user.birthdate.toISOString().split('T')[0] : '-' %></p>
+</div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

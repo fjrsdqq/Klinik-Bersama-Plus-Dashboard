@@ -1,0 +1,53 @@
+/* chart.css */
+
+.chart-section {
+  padding: 2rem;
+  margin-bottom: 2rem;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.chart-section h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #1e293b;
+}
+
+.charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.chart-box {
+  background-color: #f9fafc;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart-box h4 {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  color: #374151;
+  text-align: center;
+}
+
+.chart-container {
+  width: 100%;
+  height: 200px;
+  position: relative;
+}
+
+canvas {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 200px;
+}

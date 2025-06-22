@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Medical Data - Klinik Bersama Plus</title>
+  <link rel="stylesheet" href="/css/sidebar.css" />
+  <link rel="stylesheet" href="/css/medical-form.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="dashboard">
+    <%- include('partials/sidebar', { activePage: 'medical' }) %>
+
+    <main class="main-content">
+      <div class="form-container">
+        <h2 class="form-title">Examination Form</h2>
+        <form action="/medical-data" method="POST">
+          <label for="username">Full Name</label>
+          <input type="text" name="username" id="username" placeholder="Enter full name" required />
+
+          <label for="address">Address</label>
+          <input type="text" name="address" id="address" placeholder="Enter address" required />
+
+          <label for="birthdate">Date of Birth</label>
+          <input type="date" name="birthdate" id="birthdate" required />
+
+          <label for="check_time">Examination Time</label>
+          <input type="time" name="check_time" id="check_time" required />
+
+          <hr>
+          <h3>Medical Examination</h3>
+
+          <label for="tension">Blood Pressure (mmHg)</label>
+          <input type="text" name="tension" id="tension" placeholder="e.g. 120/80" required />
+
+          <label for="blood_sugar">Blood Sugar (mg/dL)</label>
+          <input type="number" name="blood_sugar" id="blood_sugar" placeholder="Enter blood sugar level" required />
+
+          <label for="cholesterol">Cholesterol (mg/dL)</label>
+          <input type="number" name="cholesterol" id="cholesterol" placeholder="Enter cholesterol level" required />
+
+          <label for="uric_acid">Uric Acid (mg/dL)</label>
+          <input type="number" name="uric_acid" id="uric_acid" placeholder="Enter uric acid level" required />
+
+          <label for="result">Examination Result</label>
+          <textarea name="result" id="result" placeholder="e.g. Under control, needs medication..." rows="3" required></textarea>
+
+          <button type="submit" class="submit-btn">Save</button>
+        </form>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,165 @@
+/* RESET & FONT */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+/* BODY */
+body {
+    background-color: #f0f4f8;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* CONTAINER REGISTER */
+.login-container {
+    width: 90%;
+    max-width: 1000px;
+    display: flex;
+    background: white;
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+/* KIRI */
+.login-left {
+    width: 50%;
+    background: #0c97af;
+    color: white;
+    padding: 40px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.logo {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 10;
+}
+
+.logo img {
+    height: 44px;
+    width: auto;
+}
+
+.logo span {
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff;
+    white-space: nowrap;
+}
+
+.login-left img {
+    width: 70%;
+    max-width: 240px;
+    margin: 20px 0;
+}
+
+.login-left h1 {
+    font-size: 24px;
+    margin-bottom: 12px;
+}
+
+.login-left p {
+    font-size: 14px;
+    max-width: 320px;
+    color: #dbeafe;
+}
+
+/* KANAN */
+.login-right {
+    width: 50%;
+    padding: 60px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: #ffffff;
+}
+
+.login-right h2 {
+    font-size: 26px;
+    margin-bottom: 30px;
+    color: #1e293b;
+}
+
+/* FORM */
+form input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+form input:focus {
+    border-color: #0c97af;
+    outline: none;
+    box-shadow: 0 0 5px rgba(12, 151, 175, 0.3);
+}
+
+form button {
+    width: 100%;
+    padding: 12px;
+    background-color: #0c97af;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+form button:hover {
+    background-color: #0a6c7c;
+}
+
+/* LINK LOGIN */
+.signup-link {
+    margin-top: 20px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.signup-link a {
+    color: #1e40af;
+    text-decoration: none;
+}
+
+.signup-link a:hover {
+    text-decoration: underline;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .login-container {
+        flex-direction: column;
+    }
+
+    .login-left,
+    .login-right {
+        width: 100%;
+        padding: 40px 20px;
+    }
+
+    .logo {
+        position: static;
+        margin-bottom: 20px;
+        justify-content: center;
+    }
+}
