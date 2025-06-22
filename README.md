@@ -35,10 +35,6 @@ Klinik-Bersama-Plus/
 ├── app.js
 └── package.json
 
-yaml
-Copy
-Edit
-
 ---
 
 ## 💻 Cara Clone Repository
