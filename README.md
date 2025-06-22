@@ -1,6 +1,11 @@
 # Klinik Bersama Plus Dashboard
 
-![Dashboard Preview](./public/images/dashboard-preview.png)
+### 🔐 Halaman Login
+![Login Page](./public/images/login-page.png)
+
+### 👤 Dashboard Page
+![Dashboard Page](./public/images/dashboard-page.png)
+
 
 Klinik Bersama Plus Dashboard adalah proyek web dashboard yang dikembangkan secara mandiri oleh **Fajar Sidik**. Dashboard ini dirancang untuk membantu manajemen dan visualisasi data klinik seperti data pasien, hasil medis, grafik kesehatan, dan pengaturan profil pengguna. Proyek ini menggunakan **Node.js**, **EJS**, **MySQL**, dan desain modern berbasis CSS terpisah.
 
