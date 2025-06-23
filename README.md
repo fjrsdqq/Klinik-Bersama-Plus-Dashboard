@@ -22,7 +22,7 @@ Klinik Bersama Plus Dashboard adalah proyek web dashboard yang dikembangkan seca
 ---
 
 ## 📁 Struktur Folder Singkat
-Klinik-Bersama-Plus/
+```Klinik-Bersama-Plus/
 ├── public/
 │ ├── css/
 │ │ ├── dashboard.css
@@ -38,7 +38,7 @@ Klinik-Bersama-Plus/
 │ ├── edit.ejs
 │ └── personal.ejs
 ├── app.js
-└── package.json
+└── package.json```
 
 ---
 
