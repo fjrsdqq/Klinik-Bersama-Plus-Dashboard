@@ -1,7 +1,67 @@
-// routes/index.js
+// === IMPORT MODULE ===
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
+const bcrypt = require('bcrypt');
+
+// =========================
+// ROUTE: REGISTER (TAMBAHAN)
+// =========================
+router.get('/register', (req, res) => {
+  res.render('register');
+});
+
+router.post('/register', (req, res) => {
+  const { name, email, password } = req.body;
+
+  // Cek apakah email sudah terdaftar
+  const sqlCheck = 'SELECT * FROM users WHERE email = ?';
+  db.query(sqlCheck, [email], (err, results) => {
+    if (err) return res.send('❌ Terjadi kesalahan server.');
+    if (results.length > 0) return res.send('⚠️ Email sudah terdaftar.');
+
+    // Hash password sebelum disimpan
+    bcrypt.hash(password, 10, (errHash, hashedPassword) => {
+      if (errHash) return res.send('❌ Gagal mengenkripsi password.');
+
+      const sqlInsert = 'INSERT INTO users (name, email, password) VALUES (?, ?, ?)';
+      db.query(sqlInsert, [name, email, hashedPassword], (errInsert) => {
+        if (errInsert) return res.send('❌ Gagal menyimpan user.');
+        res.redirect('/login');
+      });
+    });
+  });
+});
+
+// =========================
+// ROUTE: LOGIN
+// =========================
+router.post('/login', (req, res) => {
+  const { email, password } = req.body;
+
+  const sql = 'SELECT * FROM users WHERE email = ?';
+  db.query(sql, [email], (err, results) => {
+    if (err || results.length === 0) {
+      return res.render('login', { error: '⚠️ Email atau password salah.' });
+    }
+
+    const user = results[0];
+
+    bcrypt.compare(password, user.password, (errCompare, isMatch) => {
+      if (errCompare || !isMatch) {
+        return res.render('login', { error: '⚠️ Email atau password salah.' });
+      }
+
+      req.session.user = {
+        id: user.id,
+        name: user.name,
+        email: user.email
+      };
+
+      res.redirect('/dashboard');
+    });
+  });
+});
 
 // =========================
 // ROUTE: DASHBOARD
@@ -158,7 +218,7 @@ router.get('/profile/personal', (req, res) => {
 });
 
 // =========================
-// ROUTE: CHANGE PASSWORD PAGE
+// ROUTE: CHANGE PASSWORD
 // =========================
 router.get('/profile/change-password', (req, res) => {
   if (!req.session.user) return res.redirect('/login');
@@ -174,20 +234,65 @@ router.post('/profile/change-password', (req, res) => {
   const { current_password, new_password, confirm_password } = req.body;
   const userId = req.session.user.id;
 
-  const sqlCheck = 'SELECT * FROM users WHERE id = ? AND password = ?';
-  db.query(sqlCheck, [userId, current_password], (err, results) => {
+  if (new_password !== confirm_password) {
+    return res.send('⚠️ Password baru tidak cocok.');
+  }
+
+  const sqlCheck = 'SELECT * FROM users WHERE id = ?';
+  db.query(sqlCheck, [userId], (err, results) => {
     if (err || results.length === 0) {
-      return res.send('⚠️ Password lama salah.');
+      return res.send('⚠️ Gagal verifikasi user.');
     }
 
-    if (new_password !== confirm_password) {
-      return res.send('⚠️ Password baru tidak cocok.');
+    const user = results[0];
+
+    bcrypt.compare(current_password, user.password, (errCompare, isMatch) => {
+      if (errCompare || !isMatch) {
+        return res.send('⚠️ Password lama salah.');
+      }
+
+      bcrypt.hash(new_password, 10, (errHash, hashedPassword) => {
+        if (errHash) return res.send('❌ Gagal mengenkripsi password baru.');
+
+        const sqlUpdate = 'UPDATE users SET password = ? WHERE id = ?';
+        db.query(sqlUpdate, [hashedPassword, userId], (err2) => {
+          if (err2) return res.send('❌ Gagal mengupdate password.');
+          res.redirect('/profile');
+        });
+      });
+    });
+  });
+});
+
+// =========================
+// ROUTE: RESET PASSWORD
+// =========================
+router.get('/reset-password', (req, res) => {
+  res.render('reset-password', { error: null, success: null });
+});
+
+router.post('/reset-password', (req, res) => {
+  const { email, new_password, confirm_password } = req.body;
+
+  if (new_password !== confirm_password) {
+    return res.render('reset-password', { error: 'Password tidak cocok.', success: null });
+  }
+
+  const sqlCheck = 'SELECT * FROM users WHERE email = ?';
+  db.query(sqlCheck, [email], (err, results) => {
+    if (err || results.length === 0) {
+      return res.render('reset-password', { error: 'Email tidak ditemukan.', success: null });
     }
 
-    const sqlUpdate = 'UPDATE users SET password = ? WHERE id = ?';
-    db.query(sqlUpdate, [new_password, userId], (err2) => {
-      if (err2) return res.send('❌ Gagal mengupdate password.');
-      res.redirect('/profile');
+    bcrypt.hash(new_password, 10, (errHash, hashedPassword) => {
+      if (errHash) return res.render('reset-password', { error: 'Gagal mengenkripsi password.', success: null });
+
+      const sqlUpdate = 'UPDATE users SET password = ? WHERE email = ?';
+      db.query(sqlUpdate, [hashedPassword, email], (err2) => {
+        if (err2) return res.render('reset-password', { error: 'Gagal mereset password.', success: null });
+
+        res.render('reset-password', { error: null, success: 'Password berhasil direset. Silakan login.' });
+      });
     });
   });
 });
@@ -206,7 +311,6 @@ router.post('/profile/update', (req, res) => {
       return res.status(500).send('Gagal mengupdate profil.');
     }
 
-    // Update session agar sinkron
     req.session.user.name = name;
     req.session.user.gender = gender;
     req.session.user.birthdate = birthdate;
@@ -215,32 +319,4 @@ router.post('/profile/update', (req, res) => {
   });
 });
 
-// =========================
-// ROUTE: CHANGE PASSWORD POST
-// =========================
-router.post('/profile/change-password', (req, res) => {
-  const { current_password, new_password, confirm_password } = req.body;
-  const userId = req.session.user.id;
-
-  const sqlCheck = 'SELECT * FROM users WHERE id = ? AND password = ?';
-  db.query(sqlCheck, [userId, current_password], (err, results) => {
-    if (err || results.length === 0) {
-      return res.send('⚠️ Password lama salah.');
-    }
-
-    if (new_password !== confirm_password) {
-      return res.send('⚠️ Password baru tidak cocok.');
-    }
-
-    const sqlUpdate = 'UPDATE users SET password = ? WHERE id = ?';
-    db.query(sqlUpdate, [new_password, userId], (err2) => {
-      if (err2) return res.send('❌ Gagal mengupdate password.');
-      res.redirect('/profile');
-    });
-  });
-});
-
-// =========================
-// EXPORT ROUTER
-// =========================
 module.exports = router;

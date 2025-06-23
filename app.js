@@ -36,61 +36,31 @@ passport.use(new GoogleStrategy({
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: 'http://localhost:3000/auth/google/callback'
 }, (accessToken, refreshToken, profile, done) => {
-    // Simpan hanya data penting ke session
     const user = {
         id: profile.id,
         name: profile.displayName,
         email: profile.emails[0].value,
-        gender: '', // default kosong
+        gender: '',
         birthdate: ''
     };
     return done(null, user);
 }));
 
-// === GLOBAL MIDDLEWARE UNTUK VIEW (agar <%= user %> tersedia) ===
+// === GLOBAL MIDDLEWARE UNTUK VIEW ===
 app.use((req, res, next) => {
     res.locals.user = req.session.user || null;
     next();
 });
 
-// === AUTH ROUTES (Login/Register/Forgot) ===
+// === AUTH ROUTES ===
 app.get('/', (req, res) => res.redirect('/login'));
 
-// Login Form
 app.get('/login', (req, res) => res.render('login'));
-
-// Login Proses
-app.post('/login', (req, res) => {
-    const { email, password } = req.body;
-    const sql = 'SELECT * FROM users WHERE email = ? AND password = ?';
-    db.query(sql, [email, password], (err, results) => {
-        if (err) return res.send('❌ Terjadi kesalahan server.');
-        if (results.length > 0) {
-            req.session.user = results[0];
-            res.redirect('/dashboard');
-        } else {
-            res.send('⚠️ Email atau password salah.');
-        }
-    });
-});
-
-// Register Form
 app.get('/register', (req, res) => res.render('register'));
+app.get('/forgot-password', (req, res) => res.render('forgot-password'));
 
-// Register Proses
-app.post('/register', (req, res) => {
-    const { name, email, password } = req.body;
-    const sql = 'INSERT INTO users (name, email, password) VALUES (?, ?, ?)';
-    db.query(sql, [name, email, password], (err) => {
-        if (err) {
-            if (err.code === 'ER_DUP_ENTRY') {
-                return res.send('⚠️ Email sudah terdaftar.');
-            }
-            return res.send('❌ Gagal menyimpan data.');
-        }
-        res.redirect('/login');
-    });
-});
+// NOTE: Hapus semua post /login dan /register dari app.js,
+// karena sudah ditangani di routes/index.js secara lengkap ✅
 
 // Google OAuth
 app.get('/auth/google',
@@ -100,18 +70,10 @@ app.get('/auth/google',
 app.get('/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/login' }),
     (req, res) => {
-        req.session.user = req.user; // Simpan data dari Google ke session
+        req.session.user = req.user;
         res.redirect('/dashboard');
     }
 );
-
-// Forgot Password
-app.get('/forgot-password', (req, res) => res.render('forgot-password'));
-
-app.post('/forgot-password', (req, res) => {
-    const { email } = req.body;
-    res.send(`🔐 Tautan reset telah dikirim ke email: ${email}`);
-});
 
 // Logout
 app.get('/logout', (req, res) => {
@@ -119,7 +81,7 @@ app.get('/logout', (req, res) => {
     res.redirect('/login');
 });
 
-// === ROUTER UTAMA (untuk semua halaman dengan sidebar) ===
+// === ROUTER UTAMA (semua logic utama di sini) ===
 const mainRouter = require('./routes/index');
 app.use('/', mainRouter);
 
