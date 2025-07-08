@@ -14,13 +14,11 @@ router.get('/register', (req, res) => {
 router.post('/register', (req, res) => {
   const { name, email, password } = req.body;
 
-  // Cek apakah email sudah terdaftar
   const sqlCheck = 'SELECT * FROM users WHERE email = ?';
   db.query(sqlCheck, [email], (err, results) => {
     if (err) return res.send('❌ Terjadi kesalahan server.');
     if (results.length > 0) return res.send('⚠️ Email sudah terdaftar.');
 
-    // Hash password sebelum disimpan
     bcrypt.hash(password, 10, (errHash, hashedPassword) => {
       if (errHash) return res.send('❌ Gagal mengenkripsi password.');
 
@@ -69,16 +67,35 @@ router.post('/login', (req, res) => {
 router.get('/dashboard', (req, res) => {
   if (!req.session.user) return res.redirect('/login');
 
-  res.render('dashboard', {
-    activePage: 'dashboard',
-    chartData: [],
-    avgCholesterol: 0,
-    avgBloodSugar: 0,
-    avgUricAcid: 0,
-    lastUpdate: '-',
-    thisWeekCount: 0,
-    lastTension: '-',
-    search: ''
+  const sql = 'SELECT * FROM medical_data WHERE username = ? ORDER BY tanggal DESC';
+  db.query(sql, [req.session.user.name], (err, results) => {
+    if (err) {
+      console.error('❌ Gagal ambil data dashboard:', err);
+      return res.status(500).send('Gagal ambil data.');
+    }
+
+    const data = results;
+    const avg = (key) =>
+      data.length
+        ? (data.reduce((sum, d) => sum + Number(d[key] || 0), 0) / data.length).toFixed(1)
+        : 0;
+
+    res.render('dashboard', {
+      activePage: 'dashboard',
+      chartData: data,
+      avgCholesterol: avg('cholesterol'),
+      avgBloodSugar: avg('blood_sugar'),
+      avgUricAcid: avg('uric_acid'),
+      lastUpdate: data.length ? new Date(data[0].tanggal).toLocaleDateString('id-ID') : '-',
+      lastTension: data.length ? data[0].tension : '-',
+      thisWeekCount: data.filter(d => {
+        const today = new Date();
+        const recordDate = new Date(d.tanggal);
+        const diffDays = (today - recordDate) / (1000 * 60 * 60 * 24);
+        return diffDays <= 7;
+      }).length,
+      search: ''
+    });
   });
 });
 
@@ -134,13 +151,14 @@ router.get('/medical-data', (req, res) => {
   if (!req.session.user) return res.redirect('/login');
 
   res.render('medical-form', {
-    activePage: 'medical'
+    activePage: 'medical',
+    session: req.session // ⬅️ penting!
   });
 });
 
 router.post('/medical-data', (req, res) => {
+  const username = req.session.user.name;
   const {
-    username,
     address,
     birthdate,
     check_time,

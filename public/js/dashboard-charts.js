@@ -77,21 +77,21 @@ document.addEventListener('DOMContentLoaded', () => {
   // Inisialisasi grafik kosong
   bloodSugarChart = createLineChart(
     'bloodSugarChart',
-    'Average Blood Sugar (mg/dL)',
+    'Blood Sugar (mg/dL)',
     '#22c55e',
     'rgba(34,197,94,0.1)'
   );
 
   cholesterolChart = createLineChart(
     'cholesterolChart',
-    'Average Cholesterol (mg/dL)',
+    'Cholesterol (mg/dL)',
     '#3b82f6',
     'rgba(59,130,246,0.1)'
   );
 
   uricAcidChart = createLineChart(
     'uricAcidChart',
-    'Average Uric Acid (mg/dL)',
+    'Uric Acid (mg/dL)',
     '#ef4444',
     'rgba(239,68,68,0.1)'
   );
@@ -99,12 +99,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Fungsi untuk update chart dengan data baru
 function updateCharts(newData) {
-  if (!newData || !newData.length) return;
+  if (!newData || !Array.isArray(newData) || newData.length === 0) return;
 
-  const labels = newData.map(d => new Date(d.tanggal).toLocaleDateString('id-ID'));
-  const bloodSugarData = newData.map(d => d.blood_sugar);
-  const cholesterolData = newData.map(d => d.cholesterol);
-  const uricAcidData = newData.map(d => d.uric_acid);
+  const labels = newData.map(d => {
+    try {
+      return new Date(d.tanggal).toLocaleDateString('id-ID');
+    } catch {
+      return '';
+    }
+  });
+
+  const safeMap = (arr, key) => arr.map(d => Number(d[key]) || 0);
+
+  const bloodSugarData = safeMap(newData, 'blood_sugar');
+  const cholesterolData = safeMap(newData, 'cholesterol');
+  const uricAcidData = safeMap(newData, 'uric_acid');
 
   if (bloodSugarChart) {
     bloodSugarChart.data.labels = labels;

@@ -3,15 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <title>Dashboard - Klinik Bersama Plus</title>
-
-  <!-- Font & CSS -->
   <link rel="stylesheet" href="/css/dashboard.css">
   <link rel="stylesheet" href="/css/sidebar.css">
   <link rel="stylesheet" href="/css/chart.css">
   <link rel="stylesheet" href="/css/table.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-
-  <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -19,7 +15,7 @@
     <%- include('partials/sidebar') %>
 
     <main class="main-content">
-      
+
       <!-- Top Bar -->
       <div class="topbar">
         <form method="GET" action="/dashboard">
@@ -49,132 +45,143 @@
             <p><strong><%= thisWeekCount %></strong> New Data This Week</p>
           </div>
           <div class="card purple">
-    <h3><%= lastTension %></h3>
-  <p>Last Blood Pressure</p>
-</div>
+            <h3><%= lastTension %></h3>
+            <p>Last Blood Pressure</p>
+          </div>
         </div>
       </section>
 
       <!-- Charts Section -->
       <section class="chart-section">
-  <h2 class="section-title">Health Trends Report</h2>
-  <div class="charts">
-    <div class="chart-box">
-      <h4>Blood Sugar</h4>
-      <div class="chart-container">
-        <canvas id="bloodSugarChart"></canvas>
-      </div>
-    </div>
-    <div class="chart-box">
-      <h4>Cholesterol</h4>
-      <div class="chart-container">
-        <canvas id="cholesterolChart"></canvas>
-      </div>
-    </div>
-    <div class="chart-box">
-      <h4>Uric Acid</h4>
-      <div class="chart-container">
-        <canvas id="uricAcidChart"></canvas>
-      </div>
-    </div>
-  </div>
-</section>
+        <h2 class="section-title">Health Trends Report</h2>
+        <div class="charts">
+          <div class="chart-box">
+            <h4>Blood Sugar</h4>
+            <div class="chart-container">
+              <canvas id="bloodSugarChart"></canvas>
+            </div>
+          </div>
+          <div class="chart-box">
+            <h4>Cholesterol</h4>
+            <div class="chart-container">
+              <canvas id="cholesterolChart"></canvas>
+            </div>
+          </div>
+          <div class="chart-box">
+            <h4>Uric Acid</h4>
+            <div class="chart-container">
+              <canvas id="uricAcidChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <!-- Table Section -->
       <section class="data-list">
-  <div class="data-list-header">
-    <h2>Data List Layout</h2>
-    <input type="text" class="search-box" placeholder="Search..." value="<%= search %>" onkeydown="if(event.key==='Enter'){ window.location.href='/dashboard?search=' + this.value }">
-  </div>
-  <div class="table-container">
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>DATE</th>
-          <th>NAME</th>
-          <th>BLOOD PRESSURE (mmHg)</th>
-          <th>CHOLESTEROL (mg/dL)</th>
-          <th>BLOOD SUGAR (mg/dL)</th>
-          <th>URIC ACID (mg/dL)</th>
-          <th>RESULT</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% if (chartData && chartData.length) { %>
-          <% chartData.forEach(row => { %>
-            <tr>
-              <td><%= new Date(row.tanggal).toLocaleDateString('id-ID') %></td>
-              <td><%= row.username %></td>
-              <td><%= row.tension %></td>
-              <td><%= row.cholesterol %></td>
-              <td><%= row.blood_sugar %></td>
-              <td><%= row.uric_acid %></td>
-              <td><%= row.result %></td>
-            </tr>
-          <% }) %>
-        <% } else { %>
-          <tr>
-            <td colspan="7">No data available</td>
-          </tr>
-        <% } %>
-      </tbody>
-    </table>
-  </div>
-</section>
-
+        <div class="data-list-header">
+          <h2>Data List Layout</h2>
+          <input type="text" class="search-box" placeholder="Search..." value="<%= search %>" onkeydown="if(event.key==='Enter'){ window.location.href='/dashboard?search=' + this.value }">
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>DATE</th>
+                <th>NAME</th>
+                <th>BLOOD PRESSURE (mmHg)</th>
+                <th>CHOLESTEROL (mg/dL)</th>
+                <th>BLOOD SUGAR (mg/dL)</th>
+                <th>URIC ACID (mg/dL)</th>
+                <th>RESULT</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (chartData && chartData.length) { %>
+                <% chartData.forEach(row => { %>
+                  <tr>
+                    <td><%= new Date(row.tanggal).toLocaleDateString('id-ID') %></td>
+                    <td><%= row.username %></td>
+                    <td><%= row.tension %></td>
+                    <td><%= row.cholesterol %></td>
+                    <td><%= row.blood_sugar %></td>
+                    <td><%= row.uric_acid %></td>
+                    <td><%= row.result %></td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr><td colspan="7">No data available</td></tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </section>
 
     </main>
   </div>
 
-  <!-- Data to JS -->
+  <!-- AJAX Search Script -->
   <script>
-  const searchBox = document.querySelector('.search-box');
-  const tableBody = document.querySelector('.data-table tbody');
+    const searchBox = document.querySelector('.search-box');
+    const tableBody = document.querySelector('.data-table tbody');
 
-  searchBox.addEventListener('input', () => {
-    const search = searchBox.value;
+    searchBox.addEventListener('input', () => {
+      const search = searchBox.value;
 
-    fetch(`/dashboard/search?search=${encodeURIComponent(search)}`)
-      .then(res => res.json())
-      .then(data => {
-        // Update Table
-        tableBody.innerHTML = '';
-        if (data.chartData.length) {
-          data.chartData.forEach(row => {
+      fetch(`/dashboard/search?search=${encodeURIComponent(search)}`)
+        .then(res => res.json())
+        .then(data => {
+          // Update Table
+          tableBody.innerHTML = '';
+          if (data.chartData.length) {
+            data.chartData.forEach(row => {
+              const tr = document.createElement('tr');
+              tr.innerHTML = `
+                <td>${new Date(row.tanggal).toLocaleDateString('id-ID')}</td>
+                <td>${row.username}</td>
+                <td>${row.tension}</td>
+                <td>${row.cholesterol}</td>
+                <td>${row.blood_sugar}</td>
+                <td>${row.uric_acid}</td>
+                <td>${row.result}</td>
+              `;
+              tableBody.appendChild(tr);
+            });
+          } else {
             const tr = document.createElement('tr');
-            tr.innerHTML = `
-              <td>${new Date(row.tanggal).toLocaleDateString('id-ID')}</td>
-              <td>${row.username}</td>
-              <td>${row.tension}</td>
-              <td>${row.cholesterol}</td>
-              <td>${row.blood_sugar}</td>
-              <td>${row.uric_acid}</td>
-              <td>${row.result}</td>
-            `;
+            tr.innerHTML = '<td colspan="7">No data available</td>';
             tableBody.appendChild(tr);
-          });
-        } else {
-          const tr = document.createElement('tr');
-          tr.innerHTML = '<td colspan="7">No data available</td>';
-          tableBody.appendChild(tr);
-        }
+          }
 
-        // Update Cards
-        document.querySelector('.card.blue h3').textContent = data.avgCholesterol;
-        document.querySelector('.card.orange h3').textContent = data.avgBloodSugar;
-        document.querySelector('.card.yellow h3').textContent = data.avgUricAcid;
-        document.querySelector('.card.green h3').textContent = data.lastUpdate;
-        document.querySelector('.card.green p strong').textContent = data.thisWeekCount;
-        document.querySelector('.card.purple h3').textContent = data.lastTension;
+          // Update Cards
+          document.querySelector('.card.blue h3').textContent = data.avgCholesterol;
+          document.querySelector('.card.orange h3').textContent = data.avgBloodSugar;
+          document.querySelector('.card.yellow h3').textContent = data.avgUricAcid;
+          document.querySelector('.card.green h3').textContent = data.lastUpdate;
+          document.querySelector('.card.green p strong').textContent = data.thisWeekCount;
+          document.querySelector('.card.purple h3').textContent = data.lastTension;
 
-        // Update Charts
-        if (typeof updateCharts === 'function') {
-          updateCharts(data.chartData);
-        }
-      });
+          // Update Charts
+          if (typeof updateCharts === 'function') {
+            updateCharts(data.chartData);
+          }
+        });
+    });
+  </script>
+
+  <script>
+    const chartData = <%- JSON.stringify(chartData) %>;
+    if (typeof updateCharts === 'function') {
+      updateCharts(chartData);
+    }
+  </script>
+
+  <!-- Chart.js logic -->
+  <script src="/js/dashboard-charts.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const initialData = <%- JSON.stringify(chartData) %>;
+    updateCharts(initialData);
   });
 </script>
-  <!-- Chart Scripts -->
-  <script src="/js/dashboard-charts.js"></script>
 </body>
 </html>
